@@ -129,3 +129,108 @@ correlation_spearman = residus.corr(method="spearman")
 
 print("\nCorrélation de Spearman après retrait de la tendance :")
 print(correlation_spearman)
+# Calculer les p-values des corrélations
+categories = residus.columns
+
+p_values = pd.DataFrame(index=categories, columns=categories)
+
+for cat1 in categories:
+    for cat2 in categories:
+        coef, p_value = spearmanr(residus[cat1], residus[cat2])
+        p_values.loc[cat1, cat2] = p_value
+
+print("\nP-values des corrélations :")
+print(p_values)
+
+# 6. Analyse attendue : repondre aux questions du projet
+
+print("\n--- Analyse attendue ---")
+
+# On prend les 10 dernieres annees disponibles dans le dataset.
+# On utilise la derniere annee du fichier, pas l'annee actuelle.
+derniere_annee = annee_max
+premiere_annee_10_ans = derniere_annee - 9
+
+donnees_10_ans = df_clean[
+    (df_clean["annee"] >= premiere_annee_10_ans)
+    & (df_clean["annee"] <= derniere_annee)
+].copy()
+
+print(f"\nPeriode analysee pour les 10 dernieres annees : {premiere_annee_10_ans}-{derniere_annee}")
+
+
+def analyser_tendance_categorie(nom_categorie):
+    """Afficher une tendance simple pour une categorie."""
+    serie = (
+        events_par_temps[events_par_temps["type_evenement"] == nom_categorie]
+        .set_index("annee")["nombre_evenements"]
+        .reindex(range(premiere_annee_10_ans, derniere_annee + 1), fill_value=0)
+    )
+
+    if serie.sum() == 0:
+        print(f"\n{nom_categorie} : aucune donnee sur les 10 dernieres annees.")
+        return
+
+    regression = linregress(list(serie.index), serie.values)
+
+    print(f"\n{nom_categorie} sur les 10 dernieres annees :")
+    print(serie)
+    print(f"Pente de tendance : {regression.slope:.3f} evenement(s) par an")
+
+    if regression.slope > 0:
+        print("Interpretation simple : tendance a la hausse.")
+    elif regression.slope < 0:
+        print("Interpretation simple : tendance a la baisse.")
+    else:
+        print("Interpretation simple : tendance stable.")
+
+
+# Question 1 : tornades ou tempetes sur les 10 dernieres annees
+print("\nQuestion 1 : Le nombre de tornades ou de tempetes evolue-t-il sur les 10 dernieres annees ?")
+analyser_tendance_categorie("Storm")
+
+tornades = donnees_10_ans[
+    donnees_10_ans["Title"].str.contains("tornado", case=False, na=False)
+]
+print(f"\nNombre de lignes mentionnant une tornade sur les 10 dernieres annees : {len(tornades)}")
+print("Remarque : le dataset n'a pas une categorie separee 'Tornado'. Les tornades semblent incluses dans 'Storm'.")
+
+# Question 2 : chaleur extreme
+print("\nQuestion 2 : Les episodes de chaleur extreme deviennent-ils plus frequents ?")
+analyser_tendance_categorie("Heat")
+
+# Question 3 : froid extreme
+print("\nQuestion 3 : Les episodes de froid extreme deviennent-ils plus frequents ?")
+analyser_tendance_categorie("Cold, snow & ice")
+
+# Question 4 : annees avec davantage d'evenements
+print("\nQuestion 4 : Certaines annees presentent-elles davantage d'evenements extremes que d'autres ?")
+evenements_par_annee = (
+    df_clean
+    .groupby("annee")
+    .size()
+    .reset_index(name="nombre_evenements")
+    .sort_values("nombre_evenements", ascending=False)
+)
+
+print("\nTop 10 des annees avec le plus d'evenements :")
+print(evenements_par_annee.head(10))
+
+# Question 5 : correlation entre tempetes, chaleur et froid
+print("\nQuestion 5 : Correlation entre tempetes, chaleur et froid")
+
+categories_cibles = ["Storm", "Heat", "Cold, snow & ice"]
+categories_disponibles = [
+    categorie for categorie in categories_cibles
+    if categorie in residus.columns
+]
+
+correlation_cible = residus[categories_disponibles].corr(method="spearman")
+
+print("\nCorrelation de Spearman apres retrait de tendance :")
+print(correlation_cible)
+
+print("\nLimite importante : une correlation ne prouve pas une causalite.")
+print("Deux categories peuvent evoluer ensemble a cause d'une troisieme variable cachee,")
+print("comme l'amelioration des observations, l'augmentation du nombre d'etudes,")
+print("ou les progres des systemes de detection comme les radars Doppler.")
