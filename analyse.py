@@ -230,7 +230,4 @@ correlation_cible = residus[categories_disponibles].corr(method="spearman")
 print("\nCorrelation de Spearman apres retrait de tendance :")
 print(correlation_cible)
 
-print("\nLimite importante : une correlation ne prouve pas une causalite.")
-print("Deux categories peuvent evoluer ensemble a cause d'une troisieme variable cachee,")
-print("comme l'amelioration des observations, l'augmentation du nombre d'etudes,")
-print("ou les progres des systemes de detection comme les radars Doppler.")
+
