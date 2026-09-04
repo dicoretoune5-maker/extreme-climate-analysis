@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+import pymannkendall as mk
 #  Charger le fichier CSV
 df = pd.read_csv("data/Extreme_climate_events.csv", index_col=0)
 #  Afficher les 5 premières lignes
@@ -58,3 +60,20 @@ events_par_temps = (
 
 print("\nNombre d'événements par année, mois et catégorie :")
 print(events_par_temps.head(20))
+# Vérifier les années présentes
+annees_presentes = sorted(df_clean["annee"].unique())
+
+print("\nAnnées présentes dans le dataset :")
+print(annees_presentes)
+
+# Créer la liste complète des années entre la première et la dernière année
+annee_min = df_clean["annee"].min()
+annee_max = df_clean["annee"].max()
+
+annees_completes = set(range(annee_min, annee_max + 1))
+annees_existantes = set(annees_presentes)
+
+annees_manquantes = sorted(annees_completes - annees_existantes)
+
+print("\nAnnées manquantes :")
+print(annees_manquantes)
