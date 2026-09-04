@@ -89,6 +89,12 @@ for categorie in df_clean["type_evenement"].unique():
     )
     test_mk = mk.original_test(series)
     regression = linregress(list(range(annee_min, annee_max + 1)), series)
-    resultats_tendance = pd.DataFrame(resultats_tendance)
+    resultats_tendance.append({
+        "type_evenement": categorie,
+        "tendance_mann_kendall": test_mk.trend,
+        "p_value": test_mk.p,
+        "pente_mann_kendall": test_mk.slope,
+        "pente_regression": regression.slope
+    })
 print("\nAnalyse de tendance par catégorie :")
 print(resultats_tendance)
