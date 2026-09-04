@@ -235,7 +235,7 @@ print(correlation_cible)
 plt.figure(figsize=(10, 6))
 sns.heatmap(
             correlation_spearman, 
-            annot=True, c
+            annot=True, 
             map="coolwarm", 
             center=0
 )
