@@ -124,3 +124,8 @@ for categorie in table_categories.columns:
     residus[categorie] = y - trendance
 print("\nDonnées après retrait de la tendance :")
 print(residus.head()) 
+# Calculer la matrice de corrélation de Spearman
+correlation_spearman = residus.corr(method="spearman")
+
+print("\nCorrélation de Spearman après retrait de la tendance :")
+print(correlation_spearman)
