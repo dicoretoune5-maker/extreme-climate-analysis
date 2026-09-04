@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import pymannkendall as mk
+from scipy.stats import linregress
 #  Charger le fichier CSV
 df = pd.read_csv("data/Extreme_climate_events.csv", index_col=0)
 #  Afficher les 5 premières lignes
