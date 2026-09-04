@@ -114,3 +114,13 @@ table_categories = table_categories.fillna(0)
 
 print("\nTableau des comptages par année et catégorie :")
 print(table_categories.head())
+# Retirer la tendance commune de chaque catégorie
+residus = pd.DataFrame(index=table_categories.index)
+x = np.arange(len(table_categories.index))
+for categorie in table_categories.columns:
+    y = table_categories[categorie].values
+    regression = linregress(x, y)
+    trendance = regression.intercept + regression.slope * x
+    residuals[categorie] = y - trendance
+print("\nDonnées après retrait de la tendance :")
+print(residus.head()) 
