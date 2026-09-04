@@ -78,3 +78,17 @@ annees_manquantes = sorted(annees_completes - annees_existantes)
 
 print("\nAnnées manquantes :")
 print(annees_manquantes)
+## 4. Analyse de tendance par catégorie
+resultats_tendance = []
+for categorie in df_clean["type_evenement"].unique():
+    data_categorie = events_par_temps[events_par_temps["type_evenement"] == categorie]
+    series = (
+        data_categorie
+        .set_index("annee")["nombre_evenements"]
+        .reindex(range(annee_min, annee_max + 1), fill_value=0)
+    )
+    test_mk = mk.original_test(series)
+    regression = linregress(list(range(annee_min, annee_max + 1)), series)
+    resultats_tendance = pd.DataFrame(resultats_tendance)
+print("\nAnalyse de tendance par catégorie :")
+print(resultats_tendance)
