@@ -121,6 +121,6 @@ for categorie in table_categories.columns:
     y = table_categories[categorie].values
     regression = linregress(x, y)
     trendance = regression.intercept + regression.slope * x
-    residuals[categorie] = y - trendance
+    residus[categorie] = y - trendance
 print("\nDonnées après retrait de la tendance :")
 print(residus.head()) 
