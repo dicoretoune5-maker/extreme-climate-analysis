@@ -98,3 +98,19 @@ for categorie in df_clean["type_evenement"].unique():
     })
 print("\nAnalyse de tendance par catégorie :")
 print(resultats_tendance)
+# 5. Corrélation entre cotégories
+from scipy.stats import spearmanr
+# Créer un tableau avec les années en ligne et les catégories en colennes
+table_categories = (
+    events_par_temps
+    .groupby(["annee", "type_evenement"])["nombre_evenements"]
+    .sum()
+    .reset_index()
+    .pivot_table(index="annee", columns="type_evenement", values="nombre_evenements")
+)
+# Ajouter les années manquantes et remplacer les valeurs vides par 0
+table_categories = table_categories.reindex(range(annee_min, annee_max + 1), fill_value=0)
+table_categories = table_categories.fillna(0)
+
+print("\nTableau des comptages par année et catégorie :")
+print(table_categories.head())
