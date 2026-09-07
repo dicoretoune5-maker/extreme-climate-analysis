@@ -4,6 +4,7 @@ import pymannkendall as mk
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import linregress, spearmanr
+from pathlib import Path
 #  Charger le fichier CSV
 df = pd.read_csv("data/Extreme_climate_events.csv", index_col=0)
 #  Afficher les 5 premières lignes
@@ -234,6 +235,12 @@ print(correlation_cible)
 
 plt.figure(figsize=(10, 6))
 sns.heatmap(
+    correlation_cible,
+    annot=True,
+    cmap="coolwarm",
+    center=0,
+    vmin=-1,
+    vmax=1
 )
 
 plt.title("Une corrélation entre deux catégories d'événements ne prouve pas l'existence d'un lien causal. Deux catégories peuvent évoluer ensemble parce qu'elles sont influencées par une variable commune, comme l'amélioration des systèmes d'observation, l'augmentation du nombre d'études disponibles, ou une tendance climatique globale. Pour limiter cet effet, la tendance temporelle commune a été retirée avant de calculer les corrélations de Spearman.")
