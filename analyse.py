@@ -246,3 +246,41 @@ sns.heatmap(
 plt.title("Une corrélation entre deux catégories d'événements ne prouve pas l'existence d'un lien causal. Deux catégories peuvent évoluer ensemble parce qu'elles sont influencées par une variable commune, comme l'amélioration des systèmes d'observation, l'augmentation du nombre d'études disponibles, ou une tendance climatique globale. Pour limiter cet effet, la tendance temporelle commune a été retirée avant de calculer les corrélations de Spearman.")
 plt.tight_layout()
 plt.show()
+dossier_powerbi = Path("data") / "powerbi"
+dossier_powerbi.mkdir(exist_ok=True)
+
+evenements_annuels = (
+    events_par_temps
+    .groupby(["annee", "type_evenement"])["nombre_evenements"]
+    .sum()
+    .reset_index()
+)
+
+evenements_annuels.to_csv(
+    dossier_powerbi / "evenements_par_annee_categorie.csv",
+    index=False,
+    encoding="utf-8-sig"
+)
+
+pd.DataFrame(resultats_tendance).to_csv(
+    dossier_powerbi / "tendances_par_categorie.csv",
+    index=False,
+    encoding="utf-8-sig"
+)
+
+correlations_powerbi = (
+    correlation_cible
+    .rename_axis("categorie_1")
+    .reset_index()
+    .melt(
+        id_vars="categorie_1",
+        var_name="categorie_2",
+        value_name="correlation_spearman"
+    )
+)
+
+correlations_powerbi.to_csv(
+    dossier_powerbi / "correlations.csv",
+    index=False,
+    encoding="utf-8-sig"
+)
